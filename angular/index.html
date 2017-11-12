@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" ng-app='app'>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src='jquery-2.1.1.js'></script>    
+    <script src='angular.min.js'></script>
+    <script src='angular-route.js'></script>
+    <link rel="stylesheet" href="fonts/iconfont.css">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Document</title>
+</head>
+<body>
+    <div id="warp" ng-controller='mydiv'>
+        <div class="top">
+            <span><i class="icon iconfont icon-fangdajing"></i></span>        
+            <span>segment<b>fault</b></span>
+            <span><i class="icon iconfont icon-yonghu"></i></span>
+        </div>
+        <ul>
+            <li><a href="#/first?name=zx" class='bg'>最新问答</a></li>
+            <li><a href="#/second?name=zx">热门问答</a></li>
+            <li><a href="#/third?name=zx">等待回答</a></li>
+            <li><a href="#/four?name=gd">更多</a></li>
+        </ul>
+        <div class="text">
+            <ng-view>
+            </ng-view>
+        </div>
+        <footer>
+            <ul>
+                <li ng-repeat='(ind, item) in arr' ng-click='change(ind)' ng-class="{true: 'bg', false: ''}[item.tru]"><i class={{item.icon}}></i>{{item.tet}}</li>
+            </ul>
+        </footer>
+    </div>
+    <script>
+        var app = angular.module('app', ['ngRoute']);
+        app.config( function ($routeProvider) {
+            $routeProvider.when('/first', {
+                template: `<dl ng-repeat='(ind, item) in arr'> 
+                    <dt><img ng-src={{item.imgUrl}}></dt>
+                    <dd>
+                        <p>{{item.time}}</p>
+                        <P>{{item.title}} <span>{{item.tip}}</span></p>    
+                    </dd>
+                    </dl>`,
+                controller: function ($routeParams, $http, $scope) {
+                    console.log($routeParams);
+                    $http({
+                        method: 'get',
+                        url: 'http://localhost:9999/getD'
+                    }).then(function (response) {
+                        console.log(response)
+                        $scope.arr = response.data.page;
+                        $scope.arrs = response.data.page2;
+                        console.log(response)
+                    });
+                },
+                controllerAs: 'c'
+                
+            }).when('/second', {
+                template: `<dl ng-repeat='(ind, item) in arrs'> 
+                    <dt><img ng-src={{item.imgUrl}}></dt>
+                    <dd>
+                        <p>{{item.time}}</p>
+                        <P>{{item.title}} <span>{{item.tip}}</span></p>    
+                    </dd>
+                    </dl>`,
+                controller: function ($routeParams, $http, $scope) {
+                    console.log($routeParams);
+                    $http({
+                        method: 'get',
+                        url: 'http://localhost:9999/getD'
+                    }).then(function (response) {
+                        console.log(response)
+                        $scope.arr = response.data.page;
+                        $scope.arrs = response.data.page2;
+                        console.log(response)
+                    });
+                },
+                controllerAs: 'c'
+            }).when('/third', {
+                template: `<dl>
+                    <dt>0<span>回答</span></dt>
+                    <dd>
+                        <p>天空  13分钟前提问</p>
+                        <P>vue脚手架搭建项目结构问题  <span>vue.js</span></p>    
+                    </dd>
+                    </dl>`
+            }).when('/four', {
+                template: `<dl>
+                    <dt>0<span>回答</span></dt>
+                    <dd>
+                        <p>天空  13分钟前提问</p>
+                        <P>vue脚手架搭建项目结构问题  <span>vue.js</span></p>    
+                    </dd>
+                    </dl>`
+            }).otherwise({redirectTo: '/first'});
+        });
+        $('a').on('click', function () {
+            $(this).addClass('bg').parent().siblings().children('a').removeClass('bg');
+        })
+
+        app.controller('mydiv', function ($scope, $http) {
+            $scope.arr = [
+                {'icon': "icon iconfont icon-fangdajing",'tet': '问答', 'tru': 'true'},
+                {'icon': "icon iconfont icon-fangdajing",'tet': '头条', 'tru': 'false'},
+                {'icon': "icon iconfont icon-fangdajing",'tet': '专栏', 'tru': 'false'},
+                {'icon': "icon iconfont icon-fangdajing",'tet': '讲堂', 'tru': 'false'},
+                {'icon': "icon iconfont icon-fangdajing",'tet': '问答', 'tru': 'false'}
+            ];
+            $scope.change = function (ind) {
+                for (var i=0;i<$scope.arr.length;i++) {
+                    $scope.arr[i]['tru'] = false;
+                }
+                $scope.arr[ind]['tru'] = true;
+            }
+            
+        });
+        
+    </script>
+</body>
+</html>
